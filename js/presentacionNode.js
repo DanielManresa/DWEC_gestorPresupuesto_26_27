@@ -1,1 +1,1 @@
-alert("Daniel Manresa Ferro");
+console.log("Daniel Manresa Fero");
