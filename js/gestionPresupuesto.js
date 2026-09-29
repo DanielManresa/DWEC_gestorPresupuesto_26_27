@@ -5,11 +5,17 @@
 let presupuesto = 0;
 
 function actualizarPresupuesto() {
-    // TODO
+    if (typeof nuevoValor === 'number' && nuevoValor >= 0) {
+        presupuesto = nuevoValor;
+        return presupuesto;
+    } else {
+        console.error("El valor introducido no es válido.");
+        return -1;
+    }
 }
 
 function mostrarPresupuesto() {
-    // TODO
+    return `Tu presupuesto actual es de ${presupuesto} €.`;
 }
 
 function CrearGasto() {
