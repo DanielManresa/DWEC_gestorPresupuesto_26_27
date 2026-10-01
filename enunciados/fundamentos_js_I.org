@@ -2,7 +2,7 @@
   El objetivo de esta práctica es aprender y poner en práctica los conceptos fundamentales de JavaScript.
 
 ** Repositorio de la práctica
-   El *repositorio base* de la práctica está disponible en: https://github.com/antonioroig/DWEC_gestorPresupuesto_25_26.
+   El *repositorio base* de la práctica está disponible en: https://github.com/antonioroig/DWEC_gestorPresupuesto_26_27.
    Si el profesor añade enunciados o cambios al repositorio original, tendréis que clicar cuando estéis en la página de vuestro repositorio en *"Sync Fork"* para sincronizar vuestro repositorio con el repositorio base si lo hacéis de forma "gráfica" desde GitHub.
    En esta *segunda práctica* se debe configurar el *repositorio personal* (el que se creó haciendo un /fork/ del repositorio base) para añadir un *segundo repositorio remoto*. De esta manera, tu repositorio tendrá dos remotos:
    - El remoto *principal*, llamado ~origin~, que estará conectado con tu repositorio de tu cuenta de GitHub. Es el que utilizarás normalmente para subir periódicamente los cambios (mediante ~git push~) o para actualizarlo o clonarlo en otro equipo.
@@ -34,7 +34,7 @@ El repositorio se ha configurado para que se *ejecuten los tests automáticament
 3. Situarse en la carpeta del repositorio personal de la práctica
 4. *Añadir el remoto secundario* a tu repositorio personal. Para ello hay que ejecutar el comando: \(esto permitirá sincronizar desde el propio git y no tener que hacerlo desde GitHub\)
    #+begin_src shell
-     git remote add profesor https://github.com/antonioroig/DWEC_gestorPresupuesto_25_26
+     git remote add profesor https://github.com/antonioroig/DWEC_gestorPresupuesto_26_27
    #+end_src
 5. *Incorporar a tu repositorio personal los cambios* realizados por el profesor correspondientes a los archivos de esta práctica. Para ello hay que ejecutar:
    #+begin_src shell
