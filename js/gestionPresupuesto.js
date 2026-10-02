@@ -96,11 +96,19 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
 
     this.mostrarGastoCompleto = function() {
         let fechaLocal = new Date(this.fecha).toLocaleString();
-        let texto = `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €.\nFecha: ${fechaLocal}\nEtiquetas:`;
+        
+        let lineas = [
+            `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €.`,
+            `Fecha: ${fechaLocal}`,
+            `Etiquetas:`
+        ];
+        
         for (let etiqueta of this.etiquetas) {
-            texto += `\n${etiqueta}`;
+            lineas.push(`- ${etiqueta}`);
         }
-        return texto;
+        
+        // Unimos con \n y LE AÑADIMOS UN \n EXTRA AL FINAL EXACTO que pide el test
+        return lineas.join('\n') + '\n';
     };
 
     // Añadir etiquetas pasadas en el constructor
