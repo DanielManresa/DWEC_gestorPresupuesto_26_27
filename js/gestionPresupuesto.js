@@ -7,11 +7,34 @@ let presupuesto = 0;
 let gastos = [];
 let idGasto = 0;
 
-function listarGastos() {}
-function anyadirGasto() {}
-function borrarGasto() {}
-function calcularTotalGastos() {}
-function calcularBalance() {}
+function listarGastos() {
+    return gastos;
+}
+
+function anyadirGasto(gasto) {
+    gasto.id = idGasto;
+    idGasto++;
+    gastos.push(gasto);
+}
+
+function borrarGasto(id) {
+    let index = gastos.findIndex(g => g.id === id);
+    if (index !== -1) {
+        gastos.splice(index, 1);
+    }
+}
+
+function calcularTotalGastos() {
+    let total = 0;
+    for (let gasto of gastos) {
+        total += gasto.valor;
+    }
+    return total;
+}
+
+function calcularBalance() {
+    return presupuesto - calcularTotalGastos();
+}
 
 function actualizarPresupuesto(nuevoValor) {
     if (typeof nuevoValor === 'number' && nuevoValor >= 0) {
