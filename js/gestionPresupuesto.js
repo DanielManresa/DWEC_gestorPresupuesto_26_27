@@ -59,22 +59,20 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
         this.valor = 0;
     }
 
-    // Nuevas propiedades
     this.etiquetas = [];
     
     // Configuración inicial de fecha
     if (fecha !== undefined) {
         let parsed = Date.parse(fecha);
         if (!isNaN(parsed)) {
-            this.fecha = parsed; // timestamp
+            this.fecha = parsed;
         } else {
-            this.fecha = Date.now(); // timestamp actual si no es válida
+            this.fecha = Date.now();
         }
     } else {
-        this.fecha = Date.now(); // timestamp actual si no se pasa parámetro
+        this.fecha = Date.now();
     }
 
-    // Métodos nuevos
     this.anyadirEtiquetas = function(...nuevasEtiquetas) {
         for (let etiqueta of nuevasEtiquetas) {
             if (!this.etiquetas.includes(etiqueta)) {
@@ -107,7 +105,6 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
             lineas.push(`- ${etiqueta}`);
         }
         
-        // Unimos con \n y LE AÑADIMOS UN \n EXTRA AL FINAL EXACTO que pide el test
         return lineas.join('\n') + '\n';
     };
 
@@ -116,7 +113,6 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
         this.anyadirEtiquetas(...etiquetas);
     }
 
-    // Métodos antiguos
     this.mostrarGasto = function() {
         return `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`;
     };
@@ -131,7 +127,7 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
         }
     };
 }
-
+    
 export {
     mostrarPresupuesto,
     actualizarPresupuesto,
