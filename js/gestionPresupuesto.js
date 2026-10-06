@@ -45,6 +45,7 @@ function actualizarPresupuesto(nuevoValor) {
         return -1;
     }
 }
+# hola
 
 function mostrarPresupuesto() {
     return `Tu presupuesto actual es de ${presupuesto} €`;
