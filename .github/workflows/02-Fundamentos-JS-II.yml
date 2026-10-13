@@ -20,7 +20,11 @@ jobs:
       - uses: actions/setup-node@v4
         # Paso 2: utilizar la versión de Node correspondiente
         with:
+<<<<<<< HEAD
+          node-version: '24'
+=======
           node-version: '20'
+>>>>>>> a86a861114a3c6743f4bab79f292e7ad4a460870
       
       # npm ci es "clean install", parecido a "npm install" pero con una instalación limpia
       - name: Instalar dependencias del proyecto
