@@ -183,7 +183,6 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
         return lineas.join('\n') + '\n';
     };
 
-    // Añadir etiquetas pasadas en el constructor
     if (etiquetas.length > 0) {
         this.anyadirEtiquetas(...etiquetas);
     }
@@ -201,6 +200,24 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
             this.valor = nuevoValor;
         }
     };
+
+    this.obtenerPeriodoAgrupacion = function(periodo) {
+        let fechaObj = new Date(this.fecha); 
+        
+        let aaaa = fechaObj.getFullYear().toString();
+        let mm = (fechaObj.getMonth() + 1).toString().padStart(2, '0');
+        let dd = fechaObj.getDate().toString().padStart(2, '0');
+
+        if (periodo === "dia") {
+            return `${aaaa}-${mm}-${dd}`;
+        } else if (periodo === "mes") {
+            return `${aaaa}-${mm}`;
+        } else if (periodo === "anyo") {
+            return aaaa;
+        }
+        
+        return `${aaaa}-${mm}`; 
+    };
 }
     
 export {
@@ -211,5 +228,7 @@ export {
     anyadirGasto,
     borrarGasto,
     calcularTotalGastos,
-    calcularBalance
+    calcularBalance,
+    filtrarGastos,
+    agruparGastos
 };
