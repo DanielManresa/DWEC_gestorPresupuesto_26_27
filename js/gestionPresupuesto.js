@@ -94,6 +94,37 @@ function filtrarGastos(filtro = {}) {
     });
 }
 
+function agruparGastos(periodo = "mes", etiquetas = [], fechaDesde, fechaHasta) {
+    let parametrosFiltro = {};
+    
+    if (etiquetas && etiquetas.length > 0) {
+        parametrosFiltro.etiquetasTiene = etiquetas;
+    }
+    if (fechaDesde) {
+        parametrosFiltro.fechaDesde = fechaDesde;
+    }
+    
+    if (!fechaHasta) {
+        parametrosFiltro.fechaHasta = new Date().toISOString(); 
+    } else {
+        parametrosFiltro.fechaHasta = fechaHasta;
+    }
+
+    let gastosFiltrados = filtrarGastos(parametrosFiltro);
+
+    return gastosFiltrados.reduce((acc, gastoActual) => {
+        let clavePeriodo = gastoActual.obtenerPeriodoAgrupacion(periodo);
+
+        if (!acc[clavePeriodo]) {
+            acc[clavePeriodo] = 0;
+        }
+
+        acc[clavePeriodo] += gastoActual.valor;
+
+        return acc;
+    }, {});
+}
+
 function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
     this.descripcion = String(descripcion);
     
