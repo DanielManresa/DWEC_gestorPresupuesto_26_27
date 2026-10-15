@@ -51,6 +51,49 @@ function mostrarPresupuesto() {
     return `Tu presupuesto actual es de ${presupuesto} €`;
 }
 
+function filtrarGastos(filtro = {}) {
+    return gastos.filter(gasto => {
+        let cumpleCriterios = true;
+        
+        if (filtro.fechaDesde) {
+            let fechaDesdeMs = Date.parse(filtro.fechaDesde);
+            if (gasto.fecha < fechaDesdeMs) cumpleCriterios = false;
+        }
+
+        if (filtro.fechaHasta) {
+            let fechaHastaMs = Date.parse(filtro.fechaHasta);
+            if (gasto.fecha > fechaHastaMs) cumpleCriterios = false;
+        }
+
+        if (filtro.valorMinimo !== undefined) {
+            if (gasto.valor < filtro.valorMinimo) cumpleCriterios = false;
+        }
+
+        if (filtro.valorMaximo !== undefined) {
+            if (gasto.valor > filtro.valorMaximo) cumpleCriterios = false;
+        }
+
+        if (filtro.descripcionContiene) {
+            let descNormalizada = gasto.descripcion.toLowerCase();
+            let filtroDescNormalizada = filtro.descripcionContiene.toLowerCase();
+            if (!descNormalizada.includes(filtroDescNormalizada)) cumpleCriterios = false;
+        }
+
+        if (filtro.etiquetasTiene && Array.isArray(filtro.etiquetasTiene) && filtro.etiquetasTiene.length > 0) {
+            let etiquetasFiltroNormalizadas = filtro.etiquetasTiene.map(etq => etq.toLowerCase());
+            let etiquetasGastoNormalizadas = gasto.etiquetas.map(etq => etq.toLowerCase());
+
+            let tieneAlgunaEtiqueta = etiquetasGastoNormalizadas.some(etqGasto => 
+                etiquetasFiltroNormalizadas.includes(etqGasto)
+            );
+            
+            if (!tieneAlgunaEtiqueta) cumpleCriterios = false;
+        }
+
+        return cumpleCriterios;
+    });
+}
+
 function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
     this.descripcion = String(descripcion);
     
