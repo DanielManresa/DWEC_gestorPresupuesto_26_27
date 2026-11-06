@@ -1,3 +1,5 @@
+'use strict';
+
 function mostrarDatoEnId(idElemento, valor){
     let elemento = document.getElementById(idElemento);
     elemento.textContent = valor;
@@ -39,4 +41,46 @@ function mostrarGastoWeb(idElemento, gasto) {
     }
 
     elemento.appendChild(divGasto);
+}
+
+function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo){
+    let elemento = document.getElementById(idElemento)
+    if(!elemento) return;
+
+    let divAgrupacion = document.createElement("div");
+    divAgrupacion.className = "agrupacion";
+
+    let h1Titulo = document.createElement("h1");
+    h1Titulo.textContent = `Gastos agrupados por ${periodo}`;
+    divAgrupacion.appendChild(h1Titulo);
+
+    for(let i in agrup){
+        let valor = agrup[clave];    
+
+        let divDato = document.createElement("div");
+        divDato.className = "agrupacion-dato";
+
+        let spanClave = document.createElement("span");
+        spanClave.className = "agrupacion-dato-clave";
+        spanClave.textContent = `${Number(valor).toFixed(2)} €`;
+        divDato.appendChild(spanClave);
+
+        let spanValor = document.createElement("span");
+        spanValor.className = "agrupacion-dato-valor";
+        spanValor.textContent = `${Number(valor).toFixed(2)} €`;
+        divDato.appendChild(spanValor);
+
+        divAgrupacion.appendChild(divDato);
+
+    }
+
+    elemento.appendchild(divAgrupacion);
+
+}
+
+
+export{
+    mostrarDatoEnId,
+    mostrarGastoWeb,
+    mostrarGastosAgrupadosWeb
 }
