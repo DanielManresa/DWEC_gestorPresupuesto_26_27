@@ -1,7 +1,6 @@
 "use strict";
-// TODO: Crear las funciones, objetos y variables indicadas en el enunciado
 
-// TODO: Variable global
+// Variable global
 let presupuesto = 0;
 
 let gastos = [];
@@ -18,18 +17,15 @@ function anyadirGasto(gasto) {
 }
 
 function borrarGasto(id) {
-    let index = gastos.findIndex(g => g.id === id);
-    if (index !== -1) {
-        gastos.splice(index, 1);
+    let indice = gastos.findIndex(gasto => gasto.id === id);
+    if (indice !== -1) {
+        gastos.splice(indice, 1);
     }
 }
 
 function calcularTotalGastos() {
-    let total = 0;
-    for (let gasto of gastos) {
-        total += gasto.valor;
-    }
-    return total;
+    let total = gastos.reduce((suma, gasto) => suma + gasto.valor, 0);
+    return parseFloat(total.toFixed(2));
 }
 
 function calcularBalance() {
@@ -37,15 +33,14 @@ function calcularBalance() {
 }
 
 function actualizarPresupuesto(nuevoValor) {
-    if (typeof nuevoValor === 'number' && nuevoValor >= 0) {
-        presupuesto = nuevoValor;
-        return presupuesto;
-    } else {
-        console.error("El valor introducido no es válido.");
+    if (typeof nuevoValor !== 'number' || isNaN(nuevoValor) || nuevoValor < 0) {
+        console.error("El valor introducido debe ser un número no negativo.");
         return -1;
     }
+    
+    presupuesto = parseFloat(nuevoValor.toFixed(2));
+    return presupuesto;
 }
-//
 
 function mostrarPresupuesto() {
     return `Tu presupuesto actual es de ${presupuesto} €`;
@@ -53,44 +48,36 @@ function mostrarPresupuesto() {
 
 function filtrarGastos(filtro = {}) {
     return gastos.filter(gasto => {
-        let cumpleCriterios = true;
+        let tiempoGasto = gasto.fecha.getTime();
+
+        if (filtro.fechaDesde !== undefined) {
+            let tiempoDesde = new Date(filtro.fechaDesde).getTime();
+            if (!isNaN(tiempoDesde) && tiempoGasto < tiempoDesde) return false;
+        }
+
+        if (filtro.fechaHasta !== undefined) {
+            let tiempoHasta = new Date(filtro.fechaHasta).getTime();
+            if (!isNaN(tiempoHasta) && tiempoGasto > tiempoHasta) return false;
+        }
+
+        if (filtro.valorMinimo !== undefined && gasto.valor < filtro.valorMinimo) return false;
         
-        if (filtro.fechaDesde) {
-            let fechaDesdeMs = Date.parse(filtro.fechaDesde);
-            if (gasto.fecha < fechaDesdeMs) cumpleCriterios = false;
+        if (filtro.valorMaximo !== undefined && gasto.valor > filtro.valorMaximo) return false;
+
+        if (filtro.descripcionContiene !== undefined) {
+            let descGasto = gasto.descripcion.toLowerCase();
+            let descFiltro = filtro.descripcionContiene.toLowerCase();
+            if (!descGasto.includes(descFiltro)) return false;
         }
 
-        if (filtro.fechaHasta) {
-            let fechaHastaMs = Date.parse(filtro.fechaHasta);
-            if (gasto.fecha > fechaHastaMs) cumpleCriterios = false;
-        }
-
-        if (filtro.valorMinimo !== undefined) {
-            if (gasto.valor < filtro.valorMinimo) cumpleCriterios = false;
-        }
-
-        if (filtro.valorMaximo !== undefined) {
-            if (gasto.valor > filtro.valorMaximo) cumpleCriterios = false;
-        }
-
-        if (filtro.descripcionContiene) {
-            let descNormalizada = gasto.descripcion.toLowerCase();
-            let filtroDescNormalizada = filtro.descripcionContiene.toLowerCase();
-            if (!descNormalizada.includes(filtroDescNormalizada)) cumpleCriterios = false;
-        }
-
-        if (filtro.etiquetasTiene && Array.isArray(filtro.etiquetasTiene) && filtro.etiquetasTiene.length > 0) {
-            let etiquetasFiltroNormalizadas = filtro.etiquetasTiene.map(etq => etq.toLowerCase());
-            let etiquetasGastoNormalizadas = gasto.etiquetas.map(etq => etq.toLowerCase());
-
-            let tieneAlgunaEtiqueta = etiquetasGastoNormalizadas.some(etqGasto => 
-                etiquetasFiltroNormalizadas.includes(etqGasto)
+        if (filtro.etiquetasTiene !== undefined && filtro.etiquetasTiene.length > 0) {
+            let tieneAlguna = filtro.etiquetasTiene.some(etFiltro => 
+                gasto.etiquetas.some(etGasto => etGasto.toLowerCase() === etFiltro.toLowerCase())
             );
-            
-            if (!tieneAlgunaEtiqueta) cumpleCriterios = false;
+            if (!tieneAlguna) return false;
         }
 
-        return cumpleCriterios;
+        return true;
     });
 }
 
@@ -125,98 +112,80 @@ function agruparGastos(periodo = "mes", etiquetas = [], fechaDesde, fechaHasta) 
     }, {});
 }
 
-function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
-    this.descripcion = String(descripcion);
+function CrearGasto(descripcion, valor = 0, fecha, ...etiquetas) {
+    this.descripcion = descripcion;
     
-    if (typeof valor === 'number' && valor >= 0) {
-        this.valor = valor;
-    } else {
-        this.valor = 0;
-    }
+    this.valor = (typeof valor === 'number' && valor >= 0 && !isNaN(valor)) ? valor : 0;
+
+    let fechaParseada = new Date(fecha);
+    this.fecha = (fecha !== undefined && !isNaN(fechaParseada.getTime())) ? fechaParseada : new Date();
 
     this.etiquetas = [];
-    
-    // Configuración inicial de fecha
-    if (fecha !== undefined) {
-        let parsed = Date.parse(fecha);
-        if (!isNaN(parsed)) {
-            this.fecha = parsed;
-        } else {
-            this.fecha = Date.now();
-        }
-    } else {
-        this.fecha = Date.now();
-    }
 
     this.anyadirEtiquetas = function(...nuevasEtiquetas) {
-        for (let etiqueta of nuevasEtiquetas) {
-            if (!this.etiquetas.includes(etiqueta)) {
+        let etiquetasAplanadas = nuevasEtiquetas.flat(); 
+        
+        for (let etiqueta of etiquetasAplanadas) {
+            if (typeof etiqueta === 'string' && !this.etiquetas.includes(etiqueta)) {
                 this.etiquetas.push(etiqueta);
             }
         }
-    };
-
-    this.borrarEtiquetas = function(...etiquetasABorrar) {
-        this.etiquetas = this.etiquetas.filter(eti => !etiquetasABorrar.includes(eti));
-    };
-
-    this.actualizarFecha = function(nuevaFecha) {
-        let parsed = Date.parse(nuevaFecha);
-        if (!isNaN(parsed)) {
-            this.fecha = parsed;
-        }
-    };
-
-    this.mostrarGastoCompleto = function() {
-        let fechaLocal = new Date(this.fecha).toLocaleString();
-        
-        let lineas = [
-            `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €.`,
-            `Fecha: ${fechaLocal}`,
-            `Etiquetas:`
-        ];
-        
-        for (let etiqueta of this.etiquetas) {
-            lineas.push(`- ${etiqueta}`);
-        }
-        
-        return lineas.join('\n') + '\n';
     };
 
     if (etiquetas.length > 0) {
         this.anyadirEtiquetas(...etiquetas);
     }
 
+    this.borrarEtiquetas = function(...etiquetasABorrar) {
+        let aBorrar = etiquetasABorrar.flat();
+        this.etiquetas = this.etiquetas.filter(etiqueta => !aBorrar.includes(etiqueta));
+    };
+
+    this.actualizarFecha = function(nuevaFecha) {
+        let fechaParseada = new Date(nuevaFecha);
+        if (nuevaFecha !== undefined && !isNaN(fechaParseada.getTime())) {
+            this.fecha = fechaParseada;
+        }
+    };
+
     this.mostrarGasto = function() {
         return `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`;
     };
 
+    this.mostrarGastoCompleto = function() {
+        let fechaTexto = this.fecha.toLocaleString('es-ES');
+        
+        let textoEtiquetas = "";
+        for (let etiqueta of this.etiquetas) {
+            textoEtiquetas += `- ${etiqueta}\n`;
+        }
+
+        return `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €.\nFecha: ${fechaTexto}\nEtiquetas:\n${textoEtiquetas}`;
+    };
+
     this.actualizarDescripcion = function(nuevaDescripcion) {
-        this.descripcion = String(nuevaDescripcion);
+        this.descripcion = nuevaDescripcion;
     };
 
     this.actualizarValor = function(nuevoValor) {
-        if (typeof nuevoValor === 'number' && nuevoValor >= 0) {
+        if (typeof nuevoValor !== 'number' || isNaN(nuevoValor) || nuevoValor < 0) {
+            console.error("Has introducido un número negativo o no has introducido un número");
+        } else {
             this.valor = nuevoValor;
         }
     };
 
     this.obtenerPeriodoAgrupacion = function(periodo) {
-        let fechaObj = new Date(this.fecha); 
-        
-        let aaaa = fechaObj.getFullYear().toString();
-        let mm = (fechaObj.getMonth() + 1).toString().padStart(2, '0');
-        let dd = fechaObj.getDate().toString().padStart(2, '0');
+        let anyo = this.fecha.getFullYear();
+        let mes = (this.fecha.getMonth() + 1).toString().padStart(2, '0');
+        let dia = this.fecha.getDate().toString().padStart(2, '0');
 
-        if (periodo === "dia") {
-            return `${aaaa}-${mm}-${dd}`;
-        } else if (periodo === "mes") {
-            return `${aaaa}-${mm}`;
-        } else if (periodo === "anyo") {
-            return aaaa;
+        switch(periodo) {
+            case "anyo": return `${anyo}`;
+            case "mes": return `${anyo}-${mes}`;
+            case "dia": return `${anyo}-${mes}-${dia}`;
+            default: return undefined;
         }
-        
-        return `${aaaa}-${mm}`; 
     };
 }
     

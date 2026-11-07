@@ -2,11 +2,14 @@
 
 function mostrarDatoEnId(idElemento, valor){
     let elemento = document.getElementById(idElemento);
-    elemento.textContent = valor;
+    if (elemento) {
+        elemento.textContent = valor;
+    }
 }
 
 function mostrarGastoWeb(idElemento, gasto) {
     let elemento = document.getElementById(idElemento);
+    if (!elemento) return;
 
     let divGasto = document.createElement("div");
     divGasto.className = "gasto";
@@ -18,7 +21,7 @@ function mostrarGastoWeb(idElemento, gasto) {
 
     let divFecha = document.createElement("div");
     divFecha.className = "gasto-fecha";
-    divFecha.textContent = gasto.fecha;
+    divFecha.textContent = gasto.fecha.toLocaleDateString('es-ES');
     divGasto.appendChild(divFecha);
 
     let divValor = document.createElement("div");
@@ -44,7 +47,7 @@ function mostrarGastoWeb(idElemento, gasto) {
 }
 
 function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo){
-    let elemento = document.getElementById(idElemento)
+    let elemento = document.getElementById(idElemento);
     if(!elemento) return;
 
     let divAgrupacion = document.createElement("div");
@@ -54,7 +57,7 @@ function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo){
     h1Titulo.textContent = `Gastos agrupados por ${periodo}`;
     divAgrupacion.appendChild(h1Titulo);
 
-    for(let i in agrup){
+    for(let clave in agrup){
         let valor = agrup[clave];    
 
         let divDato = document.createElement("div");
@@ -62,24 +65,22 @@ function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo){
 
         let spanClave = document.createElement("span");
         spanClave.className = "agrupacion-dato-clave";
-        spanClave.textContent = `${Number(valor).toFixed(2)} €`;
+        spanClave.textContent = clave;
         divDato.appendChild(spanClave);
 
         let spanValor = document.createElement("span");
         spanValor.className = "agrupacion-dato-valor";
-        spanValor.textContent = `${Number(valor).toFixed(2)} €`;
+        spanValor.textContent = valor; 
         divDato.appendChild(spanValor);
 
         divAgrupacion.appendChild(divDato);
-
     }
 
-    elemento.appendchild(divAgrupacion);
-
+    elemento.appendChild(divAgrupacion);
 }
 
 
-export{
+export {
     mostrarDatoEnId,
     mostrarGastoWeb,
     mostrarGastosAgrupadosWeb
